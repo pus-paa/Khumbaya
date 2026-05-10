@@ -8,6 +8,7 @@ import { Image, Pressable, Text, View } from "react-native";
 type SubEventCardProps = {
   item: SubEvent;
   event: Event;
+  isGuestView: boolean
 };
 
 const getDerivedStatus = (item: SubEvent) => {
@@ -74,6 +75,7 @@ const PILL_HEIGHT = 52;
 export default function SubEventCard({
   item,
   event,
+  isGuestView
 }: SubEventCardProps) {
   const { push } = useThrottledRouter();
   const { setSubEventDraft } = useSubeventDraftStore();
@@ -104,11 +106,11 @@ export default function SubEventCard({
       <Pressable
         style={shadowStyle}
         className={`flex-1 bg-white rounded-xl p-4 ${statusMeta.cardClassName}`}
-          onPress={() => {
-          setSubEventDraft({ event: item, parentEvent: event  });
+        onPress={() => {
+          setSubEventDraft({ event: item, parentEvent: event });
           push({
-            pathname: "/(protected)/(client-stack)/events/[eventId]/(organizer)",
-            params: { eventId: String(item.id), isSubEvent: "true" },
+            pathname: !isGuestView ? "/(protected)/(client-stack)/events/[eventId]/(organizer)" : "/(protected)/(client-stack)/events/[eventId]/(guest)",
+            params: { eventId: String(item.id), isSubEvent: "true", isGuest: isGuestView ? "true" : "false" },
           });
         }}
       >
