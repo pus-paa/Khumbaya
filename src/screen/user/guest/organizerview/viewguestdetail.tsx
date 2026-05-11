@@ -561,7 +561,7 @@ export default function ViewGuestDetail() {
                             toISODateString(guestDetail?.eventGuest?.arrivalDatetime) ??
                             undefined
                           )
-                          : "TBD",
+                          : "",
                         pill: false,
                       },
                       {
@@ -576,7 +576,7 @@ export default function ViewGuestDetail() {
                         value:
                           guestDetail?.eventGuest?.arrivalLocation ||
                           guestDetail?.eventGuest?.arrivalInfo ||
-                          "TBD",
+                          "",
                         pill: false,
                       },
                       {
@@ -586,7 +586,7 @@ export default function ViewGuestDetail() {
                             toISODateString(guestDetail?.eventGuest?.departureDatetime) ??
                             undefined
                           )
-                          : "TBD",
+                          : "",
                         pill: false,
                       },
                       {
@@ -602,7 +602,7 @@ export default function ViewGuestDetail() {
                         value:
                           guestDetail?.eventGuest?.departureLocation ||
                           guestDetail?.eventGuest?.departureInfo ||
-                          "TBD",
+                          "",
                         pill: false,
                       },
                       {

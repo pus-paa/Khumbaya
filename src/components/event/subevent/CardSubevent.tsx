@@ -147,10 +147,11 @@ export default function SubEventCard({
             </View>
           )}
           <View className="flex-1">
+            {/* location */}
             <Text className="text-sm font-semibold text-gray-900">
-              {item.location && item.location !== "TBD"
+              {item.location && item.location !== ""
                 ? item.location
-                : "Location TBD"}
+                : ""}
             </Text>
             <Text className="text-xs text-[#896175]">
               {(() => {

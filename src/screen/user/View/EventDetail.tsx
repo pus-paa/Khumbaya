@@ -180,6 +180,7 @@ const EventDetail = () => {
           startDateTime={event.startDateTime}
           endDateTime={event.endDateTime}
           location={event.location}
+          venue ={event.venue}
         />
 
         {isSubEventView && parentEvent && (

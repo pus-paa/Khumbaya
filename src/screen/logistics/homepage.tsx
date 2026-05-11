@@ -25,7 +25,7 @@ const toAvailabilityText = (value?: Date | null | string) => {
   const date = formatDate(iso);
   const time = formatTime(iso);
 
-  if (date === '—' && time === 'TBD') return 'Not set';
+  if (date === '—' && time === '') return 'Not set';
   return `${date} • ${time}`;
 };
 

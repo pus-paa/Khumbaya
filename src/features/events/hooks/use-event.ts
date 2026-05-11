@@ -32,63 +32,13 @@ export const useCreateEvent = () => {
       const previousUpcomingEvents = queryClient.getQueryData<Event[]>([
         "events/upcoming",
       ]);
-      const previousEventsWithRole = queryClient.getQueryData<Event[]>([
-        "events/with-role",
-      ]);
+      
+      
 
-      const startDate = newEvent.startDateTime
-        ? new Date(newEvent.startDateTime)
-        : new Date();
-      const endDate = newEvent.endDateTime
-        ? new Date(newEvent.endDateTime)
-        : startDate;
+  
 
-      const optimisticEvent: Event = {
-        id: `temp-${Date.now()}`,
-        title: newEvent.title ?? "Untitled Event",
-        startDateTime: startDate.toISOString(),
-        endDateTime: endDate.toISOString(),
-        location: newEvent.location ?? "TBD",
-        venue: newEvent.location ?? "TBD",
-        imageUrl: newEvent.imageUrl ?? "",
-        role: "Organizer",
-        status: "upcoming",
-        date: startDate.toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        }),
-        time: startDate.toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "2-digit",
-        }),
-      };
-
-      queryClient.setQueryData<Event[]>(["events/upcoming"], (old) =>
-        Array.isArray(old) ? [optimisticEvent, ...old] : [optimisticEvent]
-      );
-
-      queryClient.setQueryData<Event[]>(["events/with-role"], (old) =>
-        Array.isArray(old) ? [optimisticEvent, ...old] : [optimisticEvent]
-      );
-
-      return { previousUpcomingEvents, previousEventsWithRole };
     },
-    onError: (_error, _newEvent, context) => {
-      if (context?.previousUpcomingEvents) {
-        queryClient.setQueryData(
-          ["events/upcoming"],
-          context.previousUpcomingEvents
-        );
-      }
-
-      if (context?.previousEventsWithRole) {
-        queryClient.setQueryData(
-          ["events/with-role"],
-          context.previousEventsWithRole
-        );
-      }
-    },
+    
     onSuccess: async (_data, variables) => {
       const invalidations = [
         queryClient.invalidateQueries({ queryKey: ["events/upcoming"] }),

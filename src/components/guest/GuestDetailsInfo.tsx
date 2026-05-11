@@ -94,7 +94,7 @@ export default function GuestDetailsInfo({
   };
 
   const formatTime = (dateString?: string) => {
-    if (!dateString) return "TBD";
+    if (!dateString) return "";
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return dateString;
     
@@ -236,12 +236,12 @@ export default function GuestDetailsInfo({
             items={[
               {
                 label: "Arrival Location",
-                value: `${formatDate(guest.arrivalDate)} @ ${formatTime(guest.arrivalDate)}\n${guest.arrivalLocation || "TBD"}`,
+                value: `${formatDate(guest.arrivalDate)} @ ${formatTime(guest.arrivalDate)}\n${guest.arrivalLocation || ""}`,
                 icon: <Ionicons name="airplane-outline" size={18} color="#ee2b8c" />,
               },
               {
                 label: "Departure Location",
-                value: `${formatDate(guest.departureDate)} @ ${formatTime(guest.departureDate)}\n${guest.departureLocation || "TBD"}`,
+                value: `${formatDate(guest.departureDate)} @ ${formatTime(guest.departureDate)}\n${guest.departureLocation || ""}`,
                 icon: <Ionicons name="airplane-outline" size={18} color="#ee2b8c" />,
               },
               {

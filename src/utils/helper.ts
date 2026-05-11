@@ -52,10 +52,10 @@ export const formatTime = (
   fallbackTime?: string | null
 ) => {
   if (fallbackTime) return fallbackTime;
-  if (!dateValue) return "TBD";
+  if (!dateValue) return "";
 
   const parsed = new Date(dateValue);
-  if (Number.isNaN(parsed.getTime())) return "TBD";
+  if (Number.isNaN(parsed.getTime())) return "";
 
   return parsed.toLocaleTimeString(undefined, {
     hour: "numeric",
@@ -95,7 +95,7 @@ export const formatDateTime = (dateValue?: string | null): string => {
 export const formatTimeRange = (
   startDateTime?: string | null,
   endDateTime?: string | null,
-  fallbackText = "TBD"
+  fallbackText = ""
 ): string => {
   const startText = startDateTime ? formatTime(startDateTime) : "";
   const endText = endDateTime ? formatTime(endDateTime) : "";

@@ -164,17 +164,17 @@ export default function SubEventDetailScreen() {
         contentContainerStyle={{ paddingBottom: 32 }}
       >
         <Card>
-          <Row icon="event" label="Start" value={startDate ?? "TBD"} sub={startTime} />
+          <Row icon="event" label="Start" value={startDate ?? ""} sub={startTime} />
           <Sep />
-          <Row icon="event-available" label="End" value={endDate ?? "TBD"} sub={endTime} />
+          <Row icon="event-available" label="End" value={endDate ?? ""} sub={endTime} />
           {rsvpDeadline ? (
             <>
               <Sep />
-              <Row icon="schedule" label="RSVP Deadline" value={rsvpDate ?? "TBD"} sub={rsvpTime} />
+              <Row icon="schedule" label="RSVP Deadline" value={rsvpDate ?? ""} sub={rsvpTime} />
             </>
           ) : null}
           <Sep />
-          <Row icon="location-on" label="Venue" value={location || venue || "TBD"} />
+          <Row icon="location-on" label="Venue" value={location || venue || ""} />
           {theme || dressCode || role ? <Sep /> : null}
           {theme ? <Row icon="palette" label="Theme" value={theme} /> : null}
           {dressCode ? (
