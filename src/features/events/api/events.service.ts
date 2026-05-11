@@ -76,6 +76,7 @@ interface GetEventsParams {
   page?: number;
   limit?: number;
 }
+//TODO: update this shit  this is shit literal shit
 
 const mapInvitationToEvent = (item: InvitationItem): Event => {
   const detail = item.event_detail ?? item.event ?? {};
@@ -119,8 +120,8 @@ const mapInvitationToEvent = (item: InvitationItem): Event => {
     endDateTime: endDateTimeValue,
     date: formatDate(startDateTime),
     time: formatTime(startDateTime, detail.startTime),
-    location: detail.location ?? "Location TBA",
-    venue: detail.venue ?? detail.location ?? "Location TBA",
+    location: detail.location ?? "",
+    venue: detail.venue ?? detail.location ?? "",
     imageUrl: detail.imageUrl ?? "",
     role: "Guest",
     status,
