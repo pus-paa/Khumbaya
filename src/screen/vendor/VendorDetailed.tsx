@@ -53,7 +53,7 @@ function truncateHeaderTitle(title?: string | null, maxLength = 28): string {
   if (!safe) return "Vendor Details";
   return safe.length <= maxLength ? safe : `${safe.slice(0, maxLength).trimEnd()}...`;
 }
-
+// FAAAAAAH
 export default function VendorDetailed() {
   const router = useRouter();
   const { vendorId } = useLocalSearchParams<{ vendorId: string }>();
@@ -150,7 +150,7 @@ export default function VendorDetailed() {
           </ImageBackground>
 
           {/* Vendor info block */}
-          <View className="bg-white px-4 pb-4">
+          <View className=" px-4 pb-4">
             <View className="flex-row items-end justify-between" style={{ marginTop: -36 }}>
               {/* Avatar */}
               <View style={{ height: 80, width: 80, borderRadius: 40, borderWidth: 3, borderColor: "#ee2b8c", backgroundColor: "#fff", overflow: "hidden", elevation: 4, shadowColor: "#000", shadowOpacity: 0.15, shadowRadius: 8, shadowOffset: { width: 0, height: 3 } }}>
@@ -234,7 +234,7 @@ export default function VendorDetailed() {
 
 
         {/* Gallery */}
-        <View className="mt-2 bg-white px-4 pt-5 pb-4">
+        <View className="mt-2  px-4 pt-5 pb-4">
           <View className="flex-row justify-between items-center mb-3">
             <View>
               <Text className="text-lg font-bold text-[#181114]">Gallery</Text>
@@ -267,7 +267,7 @@ export default function VendorDetailed() {
         </View>
 
         {/* Reviews */}
-        <View className="mt-2 bg-white px-4 pt-5 pb-6">
+        <View className="mt-2  px-4 pt-5 pb-6">
           <View className="flex-row justify-between items-center mb-4">
             <View>
               <Text className="text-lg font-bold text-[#181114]">Reviews</Text>
@@ -352,7 +352,7 @@ export default function VendorDetailed() {
               <Pressable
                 key={filter}
                 onPress={() => setActiveFilter(filter)}
-                className={`px-4 py-2 rounded-full border ${activeFilter === filter ? "bg-primary border-primary" : "bg-white border-gray-200"}`}
+                className={`px-4 py-2 rounded-full border ${activeFilter === filter ? "bg-primary border-primary" : "border-gray-200"}`}
               >
                 <Text className={`text-sm font-semibold ${activeFilter === filter ? "text-white" : "text-gray-500"}`}>
                   {filter}
