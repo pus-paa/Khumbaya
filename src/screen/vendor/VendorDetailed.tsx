@@ -2,7 +2,7 @@ import { Text } from "@/src/components/ui/Text";
 import { AvailableSpacesSection } from "@/src/components/vendor/AvailableSpacesSection";
 import { ServiceInfoSection } from "@/src/components/vendor/ServiceInfoSection";
 import { WriteReviewModal } from "@/src/components/vendor/WriteReviewModal";
-import { useGetBusinessById } from "@/src/features/business/hooks/use-business";
+import { useGetBusinessById, useGetEventVendor } from "@/src/features/business/hooks/use-business";
 import { BusinessCategory, OtherServiceAttribute } from "@/src/features/business/types";
 import { useAuthStore } from "@/src/store/AuthStore";
 import { shadowStyle } from "@/src/utils/helper";
@@ -56,16 +56,20 @@ function truncateHeaderTitle(title?: string | null, maxLength = 28): string {
 // FAAAAAAH
 export default function VendorDetailed() {
   const router = useRouter();
-  const { vendorId } = useLocalSearchParams<{ vendorId: string }>();
+  const { vendorId, fromEventId } = useLocalSearchParams<{ vendorId: string; fromEventId?: string }>();
   const resolvedId = Array.isArray(vendorId) ? vendorId[0] : (vendorId ?? "");
+  const resolvedEventId = Array.isArray(fromEventId) ? fromEventId[0] : (fromEventId ?? "");
 
   const [showGallery, setShowGallery] = useState(false);
   const [activeFilter, setActiveFilter] = useState("All Photos");
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showEnquiryModal, setShowEnquiryModal] = useState(false);
   const [locationText, setLocationText] = useState("—");
   const { user } = useAuthStore();
 
   const { data: businessWithAttribute, isLoading, isError } = useGetBusinessById(resolvedId);
+  const { data: eventVendorData } = useGetEventVendor(resolvedEventId, resolvedId);
+  const eventStatus = eventVendorData?.status ?? null;
 
   useEffect(() => {
     const biz = businessWithAttribute?.businessInformation;
@@ -322,20 +326,106 @@ export default function VendorDetailed() {
           )}
         </View>
 
+        
         {/* Enquiry CTA */}
-        <View className="px-4 pt-4 pb-6">
-          <Pressable
-            className="w-full rounded-2xl bg-primary py-4 items-center justify-center flex-row gap-2"
-            style={{ elevation: 6, shadowColor: "#ee2b8c", shadowOpacity: 0.4, shadowRadius: 12, shadowOffset: { width: 0, height: 4 } }}
-            onPress={() => router.push({ pathname: "/(shared)/explore/[vendorId]/enquiryform", params: { vendorId: resolvedId, businessId: String(biz.id ?? resolvedId) } })}
-          >
-            <MaterialIcons name="send" size={18} color="#fff" />
-            <Text className="text-base font-bold text-white tracking-wide">Send Enquiry</Text>
-          </Pressable>
+        <View className="px-4 pt-2 pb-6">
+          {resolvedEventId && eventStatus ? (
+            <Pressable
+              className="w-full rounded-2xl border-2 border-primary py-4 items-center justify-center flex-row gap-2"
+              onPress={() => setShowEnquiryModal(true)}
+            >
+              <MaterialIcons
+                name={eventStatus === "booked" || eventStatus === "confirmed" ? "check-circle" : "note"}
+                size={18}
+                color="#ee2b8c"
+              />
+              <Text className="text-base font-bold text-primary tracking-wide">
+                Enquiry Details
+              </Text>
+            </Pressable>
+          ) : (
+            <Pressable
+              className="w-full rounded-2xl bg-primary py-4 items-center justify-center flex-row gap-2"
+              style={{ elevation: 6, shadowColor: "#ee2b8c", shadowOpacity: 0.4, shadowRadius: 12, shadowOffset: { width: 0, height: 4 } }}
+              onPress={() => router.push({ pathname: "/(shared)/explore/[vendorId]/enquiryform", params: { vendorId: resolvedId, businessId: String(biz.id ?? resolvedId), ...(resolvedEventId ? { fromEventId: resolvedEventId } : {}) } })}
+            >
+              <MaterialIcons name="send" size={18} color="#fff" />
+              <Text className="text-base font-bold text-white tracking-wide">Send Enquiry</Text>
+            </Pressable>
+          )}
         </View>
       </ScrollView>
 
       <WriteReviewModal visible={showReviewModal} onClose={() => setShowReviewModal(false)} businessId={resolvedId} />
+
+      {/* Enquiry Details Modal */}
+      <Modal visible={showEnquiryModal} animationType="slide" transparent onRequestClose={() => setShowEnquiryModal(false)}>
+        <Pressable className="flex-1 bg-black/50 justify-end" onPress={() => setShowEnquiryModal(false)}>
+          <Pressable onPress={(e) => e.stopPropagation()}>
+            <View className="bg-white rounded-t-3xl px-5 pt-5 pb-10">
+              {/* Handle */}
+              <View className="w-10 h-1 rounded-full bg-gray-200 self-center mb-5" />
+
+              {/* Header */}
+              <View className="flex-row items-center justify-between mb-5">
+                <Text className="text-lg font-bold text-[#181114]">Enquiry Details</Text>
+                <Pressable onPress={() => setShowEnquiryModal(false)} className="h-8 w-8 items-center justify-center rounded-full bg-gray-100">
+                  <MaterialIcons name="close" size={18} color="#6b7280" />
+                </Pressable>
+              </View>
+
+              {/* Status badge */}
+              {eventStatus && (
+                <View className="flex-row items-center gap-2 mb-5 p-3 rounded-2xl bg-gray-50">
+                  <MaterialIcons name="event" size={16} color="#ee2b8c" />
+                  <Text className="text-xs text-gray-500 font-medium flex-1">Status</Text>
+                  <View style={{
+                    paddingHorizontal: 12,
+                    paddingVertical: 4,
+                    borderRadius: 20,
+                    backgroundColor:
+                      eventStatus === "booked" || eventStatus === "confirmed" ? "#DCFCE7"
+                      : eventStatus === "pending" || eventStatus === "request" ? "#FFEDD5"
+                      : eventStatus === "completed" ? "#EDE9FE"
+                      : "#F3F4F6",
+                  }}>
+                    <Text style={{
+                      fontSize: 12,
+                      fontWeight: "600",
+                      color:
+                        eventStatus === "booked" || eventStatus === "confirmed" ? "#16A34A"
+                        : eventStatus === "pending" || eventStatus === "request" ? "#EA580C"
+                        : eventStatus === "completed" ? "#7C3AED"
+                        : "#6B7280",
+                    }}>
+                      {eventStatus.charAt(0).toUpperCase() + eventStatus.slice(1)}
+                    </Text>
+                  </View>
+                </View>
+              )}
+
+              {/* Details rows */}
+              {[
+                { icon: "people" as const, label: "Estimated Guests", value: eventVendorData?.estimatedGuest != null ? String(eventVendorData.estimatedGuest) : "—" },
+                { icon: "person" as const, label: "Acquired By", value: eventVendorData?.acquiredBy ?? "—" },
+                { icon: "notes" as const, label: "Notes", value: eventVendorData?.notes ?? "—" },
+                { icon: "schedule" as const, label: "Submitted", value: eventVendorData?.createdAt ? new Date(eventVendorData.createdAt).toLocaleDateString() : "—" },
+                { icon: "update" as const, label: "Last Updated", value: eventVendorData?.updatedAt ? new Date(eventVendorData.updatedAt).toLocaleDateString() : "—" },
+              ].map(({ icon, label, value }) => (
+                <View key={label} className="flex-row items-start gap-3 py-3 border-b border-gray-50">
+                  <View className="h-7 w-7 rounded-lg bg-primary/10 items-center justify-center mt-0.5">
+                    <MaterialIcons name={icon} size={14} color="#ee2b8c" />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-xs text-gray-400 font-medium mb-0.5">{label}</Text>
+                    <Text className="text-sm text-[#181114] font-medium">{value}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       {/* Gallery Modal */}
       <Modal visible={showGallery} animationType="slide" onRequestClose={() => setShowGallery(false)}>

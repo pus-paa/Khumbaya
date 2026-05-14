@@ -34,11 +34,11 @@ const mapBusinessStatusToVendorStatus = (status: unknown): Vendor["status"] => {
   return "booked";
 };
 
-const VendorCard = ({ vendor }: { vendor: Vendor }) => (
+const VendorCard = ({ vendor, eventId }: { vendor: Vendor; eventId?: string }) => (
   <TouchableOpacity
     style={styles.vendorCard}
     onPress={() =>
-      router.push(`/events/vendors/${vendor.id}` as RelativePathString)
+      router.push({ pathname: "/(shared)/explore/[vendorId]" as RelativePathString, params: { vendorId: vendor.id, fromEventId: eventId, eventVendorStatus: vendor.status } })
     }
     activeOpacity={0.8}
   >
@@ -95,7 +95,7 @@ const VendorCard = ({ vendor }: { vendor: Vendor }) => (
         <TouchableOpacity
           style={styles.bookButton}
           onPress={() =>
-            router.push(`/events/vendors/${vendor.id}` as RelativePathString)
+            router.push({ pathname: "/(shared)/explore/[vendorId]" as RelativePathString, params: { vendorId: vendor.id, fromEventId: eventId, eventVendorStatus: vendor.status } })
           }
         >
           <Text style={styles.bookButtonText}>Book Now</Text>
@@ -104,7 +104,7 @@ const VendorCard = ({ vendor }: { vendor: Vendor }) => (
         <TouchableOpacity
           style={styles.viewButton}
           onPress={() =>
-            router.push(`/events/vendors/${vendor.id}` as RelativePathString)
+            router.push({ pathname: "/(shared)/explore/[vendorId]" as RelativePathString, params: { vendorId: vendor.id, fromEventId: eventId, eventVendorStatus: vendor.status } })
           }
         >
           <Ionicons name="ellipsis-horizontal" size={20} color="#6B7280" />
@@ -129,13 +129,13 @@ export default function EventVendorsPage() {
   const vendorsData = useMemo<Vendor[]>(() => {
     return eventBusinesses.map((business: any) => ({
       id: String(business?.id ?? ""),
-      name: business?.business_name ?? "Unnamed Vendor",
+      name: business?.businessName ?? "Unnamed Vendor",
       category: business?.category ?? "General",
       status: mapBusinessStatusToVendorStatus(business?.status),
-      contact: business?.contact_phone ?? business?.whatsapp_number ?? undefined,
+      contact: business?.contactPhone ?? business?.whatsappNumber ?? undefined,
       price:
-        typeof business?.price_starting_from === "number"
-          ? `₹${business.price_starting_from}`
+        typeof business?.priceStartingFrom === "number"
+          ? `₹${business.priceStartingFrom}`
           : undefined,
       rating:
         typeof business?.rating === "number" ? business.rating : undefined,
@@ -230,7 +230,7 @@ export default function EventVendorsPage() {
         )}
 
         {filteredVendors.map((vendor) => (
-          <VendorCard key={vendor.id} vendor={vendor} />
+          <VendorCard key={vendor.id} vendor={vendor} eventId={eventId} />
         ))}
 
         {filteredVendors.length === 0 && !!eventId && !isLoading && !isError && (
