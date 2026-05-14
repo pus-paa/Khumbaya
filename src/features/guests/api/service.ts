@@ -83,7 +83,7 @@ export const removeInvitation = async (eventId: number, guestId: number) => {
 };
 
 export const importGuestlist =async (fromEventId: number, toEventId: number) => {
-  const response = await api.post(`/event/import-guest`, {
+  const response = await api.post(`/invitation/import-guest`, {
     fromEventId,
     toEventId
   });
