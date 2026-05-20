@@ -229,6 +229,15 @@ export default function EditEventScreen() {
   const [rsvpPickerMode, setRsvpPickerMode] = useState<"date" | "time">(
     "date"
   );
+  const [changeVenue, setChangeVenue] = useState<boolean>(() => {
+    const hasVenue = !!(fullEvent ?? eventDraft)?.venue;
+    return !hasVenue; // if there's no existing venue, show dropdowns by default
+  });
+
+  useEffect(() => {
+    const hasVenue = !!(fullEvent ?? eventDraft)?.venue;
+    setChangeVenue(!hasVenue);
+  }, [fullEvent, eventDraft]);
 
   const handleRangeChange = (range: {
     startDateTime: Date;
@@ -557,31 +566,53 @@ export default function EditEventScreen() {
                 <Text className="text-sm font-semibold tracking-wide text-[#1a1b3a]">
                   Business (Venue)
                 </Text>
-                <Controller
-                  control={control}
-                  name="businessId"
-                  render={({ field: { value, onChange } }) => (
-                    <Dropdown
-                      style={dropdownStyle}
-                      data={venueBusinesses.map((b) => ({ label: b.businessName, value: String(b.id) }))}
-                      labelField="label"
-                      valueField="value"
-                      placeholder="Select a venue business"
-                      placeholderStyle={{ color: "#94a3b8", fontSize: 15 }}
-                      selectedTextStyle={{ color: "#111827", fontSize: 15 }}
-                      activeColor="#fdf2f8"
-                      value={value}
-                      onChange={(item) => {
-                        onChange(item.value);
-                        setValue("venueId", null);
-                        setValue("venueName", "");
-                      }}
-                    />
-                  )}
-                />
+
+                {/* Show dropdowns when changeVenue is active OR when there's no existing venue; otherwise show venue info with Edit trigger */}
+                {changeVenue || !(fullEvent ?? eventDraft)?.venue ? (
+                  <Controller
+                    control={control}
+                    name="businessId"
+                    render={({ field: { value, onChange } }) => (
+                      <Dropdown
+                        style={dropdownStyle}
+                        data={venueBusinesses.map((b) => ({ label: b.businessName, value: String(b.id) }))}
+                        labelField="label"
+                        valueField="value"
+                        placeholder="Select a venue business"
+                        placeholderStyle={{ color: "#94a3b8", fontSize: 15 }}
+                        selectedTextStyle={{ color: "#111827", fontSize: 15 }}
+                        activeColor="#fdf2f8"
+                        value={value}
+                        onChange={(item) => {
+                          onChange(item.value);
+                          setValue("venueId", null);
+                          setValue("venueName", "");
+                        }}
+                      />
+                    )}
+                  />
+                ) : (
+                  <View className="flex-row items-center justify-between">
+                    <TouchableOpacity
+                      onPress={() => setChangeVenue(true)}
+                      activeOpacity={0.8}
+                      className="flex-1 bg-white rounded-md px-4 py-3 border border-pink-100"
+                    >
+                      <Text className="text-sm font-medium text-slate-800">{fullEvent?.venue ?? eventDraft?.venue}</Text>
+                      <Text className="text-xs text-slate-500">{fullEvent?.location ?? eventDraft?.location}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => setChangeVenue((v) => !v)}
+                      activeOpacity={0.8}
+                      className="ml-3 px-3 py-2 rounded-md bg-pink-50 border border-pink-100"
+                    >
+                      <Text className="text-pink-600">{changeVenue ? "Cancel" : "Edit"}</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
 
-              {selectedBusinessId && (
+              {changeVenue && selectedBusinessId && (
                 <View className="gap-2">
                   <Text className="text-sm font-semibold tracking-wide text-[#1a1b3a]">
                     Venue Type
